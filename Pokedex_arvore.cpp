@@ -7,9 +7,9 @@
 #include <stdio.h>
 using namespace std;
 
-// Defini��o da estrutura para representar uma aresta
+// Defini??o da estrutura para representar uma aresta
 struct no {
-    int vertice; // v�rtice adjacente
+    int vertice; // v?rtice adjacente
     int peso;    // peso da aresta
 };
 
@@ -21,31 +21,31 @@ struct Cidades {
 
 // Estrutura para representar um Pokemon
 typedef struct Pokemon {
-    char nome[50];
-    char tipo[20];
+    string nome;
+    string tipo;
     int numero;
     int posx;
     int posy;
 } Pokemon;
 
-// Fun��o para criar uma aresta entre os v�rtices u e v com peso p
+// Fun??o para criar uma aresta entre os v?rtices u e v com peso p
 void cria_aresta(list<no> adj[], int u, int v, int p, int orientado) {
     no x;
     x.vertice = v;
     x.peso = p;
-    adj[u].push_back(x); // Adiciona a aresta na lista de adjac�ncia do v�rtice u
+    adj[u].push_back(x); // Adiciona a aresta na lista de adjac?ncia do v?rtice u
     if (orientado == 0) {
         x.vertice = u;
-        adj[v].push_back(x); // Adiciona a aresta na lista de adjac�ncia do v�rtice v (se n�o for orientado)
+        adj[v].push_back(x); // Adiciona a aresta na lista de adjac?ncia do v?rtice v (se n?o for orientado)
     }
 }
 
-// Fun��o para calcular o menor caminho utilizando o algoritmo de Dijkstra
+// Fun??o para calcular o menor caminho utilizando o algoritmo de Dijkstra
 void dijkstra(list<no> adj[], int nVertices, int codigo_atual, int codigo_final) {
-    // Vetor para rastrear os v�rtices inclu�dos na MST
+    // Vetor para rastrear os v?rtices inclu?dos na MST
     bool intree[nVertices];
     fill_n(intree, nVertices, false);
-    // Vetor para armazenar as dist�ncias m�nimas
+    // Vetor para armazenar as dist?ncias m?nimas
     int distance[nVertices];
     // Vetor para armazenar os pais na MST
     int parent[nVertices];
@@ -56,26 +56,26 @@ void dijkstra(list<no> adj[], int nVertices, int codigo_atual, int codigo_final)
         parent[i] = -1;
     }
 
-    distance[codigo_atual] = 0; // Define a dist�ncia do v�rtice inicial como 0
-    int v = codigo_atual;        // Inicia do v�rtice de in�cio
+    distance[codigo_atual] = 0; // Define a dist?ncia do v?rtice inicial como 0
+    int v = codigo_atual;        // Inicia do v?rtice de in?cio
 
     // Algoritmo de Dijkstra
     while (!intree[v]) {
-        intree[v] = true; // Marca o v�rtice como inclu�do na MST
+        intree[v] = true; // Marca o v?rtice como inclu?do na MST
 
-        // Itera sobre todas as arestas adjacentes ao v�rtice atual
+        // Itera sobre todas as arestas adjacentes ao v?rtice atual
         for (list<no>::iterator it = adj[v].begin(); it != adj[v].end(); ++it) {
             int dest = it->vertice;
             int weight = it->peso;
 
-            // Se o v�rtice n�o estiver na MST e a dist�ncia m�nima at� ele for atualiz�vel
+            // Se o v?rtice n?o estiver na MST e a dist?ncia m?nima at? ele for atualiz?vel
             if (!intree[dest] && distance[dest] > distance[v] + weight) {
-                distance[dest] = distance[v] + weight; // Atualiza a dist�ncia m�nima
+                distance[dest] = distance[v] + weight; // Atualiza a dist?ncia m?nima
                 parent[dest] = v; // Atualiza o pai
             }
         }
 
-        // Encontra o v�rtice mais pr�ximo que n�o est� na MST
+        // Encontra o v?rtice mais pr?ximo que n?o est? na MST
         v = 0;
         int dist = INT_MAX;
         for (int u = 0; u < nVertices; ++u) {
@@ -86,7 +86,7 @@ void dijkstra(list<no> adj[], int nVertices, int codigo_atual, int codigo_final)
         }
     }
 
-    // Constr�i o vetor caminho
+    // Constr?i o vetor caminho
     int caminho[nVertices];
     int at = codigo_final;
     int index = 0;
@@ -119,101 +119,93 @@ void dijkstra(list<no> adj[], int nVertices, int codigo_atual, int codigo_final)
     cout << "Custo: " << custoCaminho << endl;
 }
 
-/*================FUN�OES REFERENTE �RVORE BIN�RIA DE BUSCA===================*/
+/*================FUN?OES REFERENTE ?RVORE BIN?RIA DE BUSCA===================*/
 // Estrutura para o nó de uma Árvore binária
 struct Arvore {
     Pokemon pokemon;
-    struct Arvore* esquerda;
-    struct Arvore* direita;
-}Arvore;
+    Arvore* esquerda;
+    Arvore* direita;
+};
 
-typedef Arvore* Arvore;
+typedef Arvore* arvoreptr;
 
 // Funçãoo para inserir um Pokemon na árvore binária mantendo a ordem alfabética pelo nome
-void inserirPorNome(Arvore &raiz, Pokemon pokemon) {
-    if (raiz == NULL) {
+void inserirPorNome(arvoreptr &raiz, Pokemon pokemon) {
+    if (raiz == NULL){
         raiz = new Arvore;
         raiz->pokemon = pokemon;
         raiz->esquerda = NULL;
         raiz->direita = NULL;
     }
-    // Comparar os nomes dos Pokémons para decidir em qual lado inserir
-    int comparacao = strcmp(pokemon->nome, raiz->pokemon->nome);
-    if (comparacao <= 0) {
-        raiz->esquerda = inserirPorNome(raiz->esquerda, pokemon);
-    } else if (comparacao > 0) {
-        raiz->direita = inserirPorNome(raiz->direita, pokemon);
-    }
+    else if(pokemon.nome < raiz->pokemon.nome)
+    	inserirPorNome(raiz->esquerda,pokemon);
+    else
+		inserirPorNome(raiz->direita,pokemon);
 }
 
-// Funçãoo para inserir um Pokemon na árvore binária mantendo a ordem alfabética pelo Tipo
-void inserirPorTipo(Arvore &raiz, Pokemon pokemon) {
-    if (raiz == NULL) {
+void inserirPorTipo(arvoreptr &raiz, Pokemon pokemon) {
+    if (raiz == NULL){
         raiz = new Arvore;
         raiz->pokemon = pokemon;
         raiz->esquerda = NULL;
         raiz->direita = NULL;
     }
-    // Comparar os tipos dos Pokémons para decidir em qual lado inserir
-    int comparacao = strcmp(pokemon->tipo, raiz->pokemon->tipo);
-    if (comparacao <= 0) {
-        raiz->esquerda = inserirPorTipo(raiz->esquerda, pokemon);
-    } else if (comparacao > 0) {
-        raiz->direita = inserirPorTipo(raiz->direita, pokemon);
-    }
+    else if(pokemon.tipo < raiz->pokemon.tipo)
+    	inserirPorNome(raiz->esquerda,pokemon);
+    else
+		inserirPorNome(raiz->direita,pokemon);
 }
 
-// Fun��o para realizar o percurso em ordem (inorder traversal) e imprimir os Pok�mons em ordem alfab�tica
-void inorderPorNome(Arvore* raiz) {
-    if (raiz != NULL) {
-        inorderPorNome(raiz->esquerda);
-        cout << "Nome: " << raiz->pokemon->nome <<endl;
-        cout << "Tipo: " << raiz->pokemon->tipo <<endl;
-        cout << "C�digo na Pokedex: " <<raiz->pokemon->numero <<endl;
-        cout << "Posi��o: x= " << raiz->pokemon->posx <<" y= " << raiz->pokemon->posy<<endl;
-        inorderPorNome(raiz->direita);
-    }
-}
-
-// Fun��o para realizar o percurso em ordem (inorder traversal) e imprimir os Pok�mons em ordem alfab�tica de tipo
-void inorderPorTipo(Arvore* raiz) {
-    if (raiz != NULL) {
-        inorderPorTipo(raiz->esquerda);
-        cout << "Tipo: " << raiz->pokemon->tipo <<endl;
-		cout << "Nome: " << raiz->pokemon->nome <<endl;
-        cout << "C�digo na Pokedex: " <<raiz->pokemon->numero <<endl;
-        cout << "Posi��o: x= " << raiz->pokemon->posx <<" y= " << raiz->pokemon->posy<<endl;
-        inorderPorTipo(raiz->direita);
-    }
-}
-
-Arvore* buscaPorNome(Arvore* p, char nome[50]){
-	int comparacao = strcmp(p->pokemon.nome,nome);	
-	if(p == NULL)
+arvoreptr buscarPokemon(arvoreptr raiz, string nome){
+	if(raiz == NULL)
 		return NULL;
-	else if(comparacao == 0)
-		return p;
-	else if(comparacao < 0)
-		return buscaPorNome(p->esquerda);
+	else if(nome == raiz->pokemon.nome)
+		return raiz;
+	else if(nome < raiz->pokemon.nome)
+		return buscarPokemon(raiz->esquerda,nome);
 	else
-		return buscaPorNome(p->direita);
+		return buscarPokemon(raiz->direita,nome);
+}
+
+void inOrder(arvoreptr raiz){
+	if(raiz != NULL){
+		inOrder(raiz->esquerda);
+		cout << "Nome do Pokemon: " << raiz->pokemon.nome<<endl;
+		cout << "Tipo do Pokemon: " << raiz->pokemon.tipo<<endl;
+		cout << "Código do Pokemon na Pokedex: " << raiz->pokemon.numero<<endl;
+		cout << "Coordenadas do Pokemon: x= " << raiz->pokemon.posx <<" y= "<<raiz->pokemon.posy<<endl;
+		cout << endl;
+		inOrder(raiz->direita);
+	}
+}
+
+void destruirArvore(arvoreptr &raiz){
+	if(raiz != NULL){
+		destruirArvore(raiz->esquerda);
+		destruirArvore(raiz->direita);
+		delete raiz;
+	}
+	raiz = NULL;
 }
 
 int main() {
     setlocale(LC_ALL, "portuguese");
-    // Vari�veis
+    // Vari?veis
     int contador_cidades = 0;
     int orientado = 1;
     int codigo_atual;
     int codigo_final;
-    int u; // V�rtice de origem
-    int v; // V�rtice de destino
+    int u; // V?rtice de origem
+    int v; // V?rtice de destino
     int p; // Peso
-    Arvore* raiz = NULL; // Criar a raiz da �rvore bin�ria
-    Arvore* raizTipo = NULL;
-    int i = 0; // Inicializa a vari�vel i
+    int i = 0; // Inicializa a vari?vel i
+	arvoreptr arvorePorNome = NULL;
+	arvoreptr arvorePorTipo = NULL;
+	arvoreptr resultado;
+	Pokemon pkm;
+	string nomePokemon;
 
-    Cidades city[10000];
+	Cidades city[10000];
     list<no> adj[10000];
 
     // Loop principal do programa
@@ -222,11 +214,11 @@ int main() {
         cout << "Bem-vindo a sua Pokedex" << endl;
         cout << "Escolha uma das funcoes disponiveis" << endl;
         cout << "1 - Cadastrar uma cidade" << endl;
-        cout << "2 - Mostrar o Centro Pokemon mais pr�ximo" << endl;
+        cout << "2 - Mostrar o Centro Pokemon mais pr?ximo" << endl;
         cout << "3 - Cadastrar um Pokemon" << endl;
-        cout << "4 - Listar os Pokemons por ordem alfab�tica dos nomes" << endl;
-        cout << "5 - Buscar Pok�mon pelo Nome" << endl;
-        cout << "6 - Listar os Pokemons por ordem alfab�tica dos tipos" << endl;
+        cout << "4 - Listar os Pokemons por ordem alfab?tica dos nomes" << endl;
+        cout << "5 - Buscar Pok?mon pelo Nome" << endl;
+        cout << "6 - Listar os Pokemons por ordem alfab?tica dos tipos" << endl;
         cout << "7 - Contar Pokemons cadastrados por tipo" << endl;
         cout << "8 - Mostrar Pokemons no alcance da Pokedex" << endl;
         cout << "0 - Desligar Pokedex" << endl;
@@ -235,19 +227,18 @@ int main() {
         int opcao;
         cin >> opcao;
 
-        // Switch para escolher a op��o do menu
+        // Switch para escolher a op??o do menu
         switch (opcao) {
         
 		case 0:
             exit(0); // Sai do programa
-            free(raiz); //libera a mem�ria alocada para a arvore de nome
-            free(raizTipo);	//libera a mem�ria alocada para a arvore de tipos
-			break;
+            destruirArvore(arvorePorNome);
+            destruirArvore(arvorePorTipo);
         
 		case 1: // Cadastro de Cidade
             do {
                 i++;
-                cout << "Digite o c�digo da cidade: ";
+                cout << "Digite o c?digo da cidade: ";
                 cin >> city[i].codigo;
                 cout << "Digite o nome da cidade: ";
                 cin.ignore();
@@ -257,26 +248,26 @@ int main() {
 
                 contador_cidades++;
 
-                cout << "Deseja continuar cadastrando cidades? (0 - Sim / 1 - N�o): ";
+                cout << "Deseja continuar cadastrando cidades? (0 - Sim / 1 - N?o): ";
                 cin >> opcao;
             } while (opcao != 1);
 			break;
 
         case 2:
-            cout << "C�digo da cidade atual: ";
+            cout << "C?digo da cidade atual: ";
             cin >> codigo_atual;
 
-            cout << "Esses s�o os c�digos das cidades que possuem Centro de Pokemon: ";
-            for (int j = 1; j <= contador_cidades; j++) // In�cio do loop a partir de 1
+            cout << "Esses s?o os c?digos das cidades que possuem Centro de Pokemon: ";
+            for (int j = 1; j <= contador_cidades; j++) // In?cio do loop a partir de 1
             {
-                if (city[j].temCentroPokemon == 'S') // Ajuste no �ndice para city
+                if (city[j].temCentroPokemon == 'S') // Ajuste no ?ndice para city
                 {
                     cout << city[j].codigo << " ";
                 }
             }
             cout << endl;
 
-            cout << "C�digo de destino (Cidade que possui Centro de Pokemon): ";
+            cout << "C?digo de destino (Cidade que possui Centro de Pokemon): ";
             cin >> codigo_final;
 
             cout << "Insira as arestas do grafo (origem destino peso), digite -1 -1 -1 para terminar:" << endl;
@@ -286,18 +277,16 @@ int main() {
                     break;
                 }
 
-                cria_aresta(adj, u, v, p, orientado); // Cria a aresta entre os v�rtices u e v com peso p
+                cria_aresta(adj, u, v, p, orientado); // Cria a aresta entre os v?rtices u e v com peso p
             }
 
             dijkstra(adj, contador_cidades, codigo_atual, codigo_final);
 			break;
 
         case 3: // Cadastro de Pokemon
-            Pokemon pkm;
-            pkm = new Pokemon;
 
             cout << "Digite o nome do Pokemon: ";
-            cin >> pkm.nome;
+			cin >> pkm.nome;
             cout << "Digite o tipo do Pokemon: ";
             cin >> pkm.tipo;
             cout << "Digite o numero do Pokemon: ";
@@ -306,43 +295,46 @@ int main() {
             cin >> pkm.posx;
             cout << "Digite a coordenada y do Pokemon: ";
             cin >> pkm.posy;
-            raiz = inserirPorNome(raiz, pkm);
-            raizTipo = inserirPorTipo(raizTipo,pkm);
-            pkm++;
+            inserirPorNome(arvorePorNome,pkm);
+            inserirPorTipo(arvorePorTipo,pkm);
 			break;
-
-        case 4: // Listar o Pokemon cadastrado por ordem alfab�tica dos nomes
-            cout << "Lista de Pokemons Ordenados por ordem alfab�tica de Nomes" << endl;
-            inorderPorNome(raiz);
-            cout << endl;
-			break;
-
-        case 5: // Buscar pokemon pelo nome
 		
-		break;
-
-		case 6: // Listar o Pokemon cadastrado por ordem alfab�tica dos tipos
-			cout << "Lista de Pokemons Cadastrados Ordenados por ordem alfab�tica de tipo"<<endl;
-			inorderPorTipo(raizTipo);
+		case 4:
+			inOrder(arvorePorNome);
 			break;
+		
+		case 5:
+			cout << "Digite o nome do Pokemon que deseja buscar: ";
+			cin >> nomePokemon;
+			resultado = buscarPokemon(arvorePorNome,nomePokemon);
+			if(resultado == NULL)
+				cout << "Pokémon não encontrado!"<<endl;
+			else
+				cout << "Pokémon encontrado!"<<endl;
+			break;
+		
+		case 6:
+			inOrder(arvorePorTipo);
+			break;
+
         }
 
-        // Verifica se o usu�rio deseja voltar ao menu principal
+        // Verifica se o usu?rio deseja voltar ao menu principal
         cout << "Deseja voltar ao menu principal? (S/N)" << endl;
         char menu;
         cin >> menu;
-        if (toupper(menu) == 'N') // Converte a entrada para mai�sculas e verifica se � 'N'
+        if (toupper(menu) == 'N') // Converte a entrada para mai?sculas e verifica se ? 'N'
         {
             exit(0); // Sai do programa
-            free(raiz);
-            free(raizTipo);
+            destruirArvore(arvorePorNome);
+            destruirArvore(arvorePorTipo);
         }
     }
     return 0;
 }
 
 /*
-    Tema:  POK�DEX
+    Tema:  POK?DEX
     Nomes:  DOUGLAS OTANI, NATALIA APARECIDA, PAULO HENRIQUE
 
 */
